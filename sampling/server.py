@@ -15,6 +15,16 @@ async def trigger_sampling() -> str:
     try:
         # Get the request context to access sampling capabilities
         ctx = mcp.get_context()
+        
+        # Check if the client supports sampling
+        # We can check ctx.session.client_params.capabilities if available.
+        
+        print(f"[Server] Client capabilities: {ctx.session.client_params.capabilities}")
+        
+        sampling_cap = ctx.session.client_params.capabilities.sampling if ctx.session.client_params and ctx.session.client_params.capabilities else None
+        if not sampling_cap:
+             print("[Server] Client does not support sampling.")
+             return "Error: This client does not support sampling (LLM features)."
 
         # Request sampling from the client
         result = await ctx.session.create_message(
